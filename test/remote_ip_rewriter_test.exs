@@ -17,6 +17,10 @@ defmodule RemoteIpRewriterTest do
 
   @opts App.init([])
 
+  def remote_ip(conn, opts \\ []) do
+    RemoteIpRewriter.call(conn, RemoteIpRewriter.init(opts))
+  end
+
   test "rewrites IPv4 address" do
     conn = conn(:get, "/") |> put_xff_header("158.15.47.12") |> App.call(@opts)
     assert conn.remote_ip == {158, 15, 47, 12}
@@ -57,6 +61,30 @@ defmodule RemoteIpRewriterTest do
     assert conn.remote_ip == {8193, 3512, 44048, 65025, 0, 0, 0, 0}
   end
 
+  test "doesnt trust local proxies when trust_local_proxies == false" do
+    conn = conn(:get, "/") 
+           |> set_remote_ip({192, 168, 1, 4}) 
+           |> put_xff_header("5.6.7.8") 
+           |> remote_ip(trust_local_proxies: false)
+    assert conn.remote_ip == {192, 168, 1, 4}
+  end
+
+  test "parses header when remote_ip is in trused_proxies" do
+    conn = conn(:get, "/") 
+           |> set_remote_ip({45, 1, 1, 4}) 
+           |> put_xff_header("5.6.7.8") 
+           |> remote_ip(trust_local_proxies: false, trusted_proxies: [{45, 1, 1, 4}])
+    assert conn.remote_ip == {5, 6, 7, 8}
+  end
+
+  test "trusts local proxy when its defined in trusted_proxies" do
+    conn = conn(:get, "/") 
+           |> set_remote_ip({192, 168, 1, 4}) 
+           |> put_xff_header("5.6.7.8") 
+           |> remote_ip(trust_local_proxies: false, trusted_proxies: [{192, 168, 1, 4}])
+    assert conn.remote_ip == {5, 6, 7, 8}
+  end
+
   defp put_xff_header(conn, value) do
     put_req_header(conn, "x-forwarded-for", value)
   end
@@ -64,5 +92,4 @@ defmodule RemoteIpRewriterTest do
   def set_remote_ip(conn, value) do
     %{conn | remote_ip: value}
   end
-
 end
