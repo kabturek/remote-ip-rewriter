@@ -17,7 +17,10 @@ defmodule TrustedProxyRewriter.Mixfile do
   end
 
   defp deps do
-    [{:plug, "~> 1.1"}]
+    [
+      {:plug, "~> 1.1"},
+      {:ex_doc, ">= 0.0.0", only: :dev}
+    ]
   end
 
   defp description do
