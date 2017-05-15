@@ -12,19 +12,19 @@ defmodule RemoteIpRewriter do
   end
 
   def call(conn, {trust_local_proxies, trusted_proxies}) do
-    if (trust_local_proxies and private_network?(conn.remote_ip)) or conn.remote_ip in trusted_proxies do
-      conn |> get_req_header(@xff_header) |> rewrite_remote_ip(conn)
+    if trust_ip?(conn.remote_ip, trust_local_proxies, trusted_proxies) do
+      conn |> get_req_header(@xff_header) |> rewrite_remote_ip(conn, trust_local_proxies, trusted_proxies)
     else
       conn
     end
   end
 
-  defp rewrite_remote_ip([], conn) do
+  defp rewrite_remote_ip([], conn, _, _) do
     conn
   end
 
-  defp rewrite_remote_ip([header | _], conn) do
-    case ips_from(header) |> parse_addresses do
+  defp rewrite_remote_ip([header | _], conn, trust_local_proxies, trusted_proxies) do
+    case ips_from(header) |> parse_addresses(trust_local_proxies, trusted_proxies) do
       ip when is_tuple(ip) ->
         %{conn | remote_ip: ip}
       nil ->
@@ -40,15 +40,23 @@ defmodule RemoteIpRewriter do
     |> Enum.reverse
   end
 
-  defp parse_addresses([]), do: nil
+  defp parse_addresses([], _, _), do: nil
 
-  defp parse_addresses([address | rest]) do
+  defp parse_addresses([address | rest], trust_local_proxies, trusted_proxies) do
     case address |> String.strip |> to_char_list |> :inet.parse_address do
       {:ok, ip} ->
-        if private_network?(ip), do: parse_addresses(rest), else: ip
+        if trust_ip?(ip, trust_local_proxies, trusted_proxies) do
+          parse_addresses(rest, trust_local_proxies, trusted_proxies) 
+        else
+          ip
+        end
       _ ->
         nil
     end
+  end
+  
+  defp trust_ip?(remote_ip, trust_local_proxies, trusted_proxies) do
+    (trust_local_proxies and private_network?(remote_ip)) or remote_ip in trusted_proxies
   end
 
   defp private_network?({127, 0, 0, 1}), do: true
