@@ -1,11 +1,11 @@
-defmodule RemoteIpRewriter do
+defmodule TrustedProxyRewriter do
   import Plug.Conn, only: [get_req_header: 2]
   @behaviour Plug
 
   @xff_header "x-real-ip"
 
   def init(opts) do
-    trusted_proxies = Keyword.get(opts, :trusted_proxies, [])
+    trusted_proxies = Keyword.get(opts, :proxies, [])
     header_name = Keyword.get(opts, :header_name, @xff_header)
 
     {header_name, trusted_proxies}

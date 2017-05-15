@@ -10,11 +10,11 @@ use Mix.Config
 
 # You can configure for your application as:
 #
-#     config :remote_ip_rewriter, key: :value
+#     config :trusted_proxy_rewriter, key: :value
 #
 # And access this configuration in your application as:
 #
-#     Application.get_env(:remote_ip_rewriter, :key)
+#     Application.get_env(:trusted_proxy_rewriter, :key)
 #
 # Or configure a 3rd-party app:
 #

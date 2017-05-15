@@ -1,8 +1,8 @@
-defmodule RemoteIpRewriter.Mixfile do
+defmodule TrustedProxyRewriter.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :remote_ip_rewriter,
+    [app: :trusted_proxy_rewriter,
      version: "0.0.3",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
@@ -22,15 +22,15 @@ defmodule RemoteIpRewriter.Mixfile do
 
   defp description do
     """
-    An Elixir plug to rewrite the value of remote_ip key of Plug.Conn struct if an X-Forwarded-For header is found.
+    An Elixir plug to rewrite the value of remote_ip key of Plug.Conn struct if the request comes from a trusted proxy.
     """
   end
 
   defp package do
     [files: ~w(lib mix.exs README.md LICENSE),
-     maintainers: ["Krzysztof Mochejski"],
+     maintainers: ["Marcin Domański"],
      licenses: ["MIT"],
-     links: %{"GitHub" => "https://github.com/krzysztofmo/remote-ip-rewriter"}]
+     links: %{"GitHub" => "https://github.com/kabturek/trusted-proxy-rewriter"}]
 end
 
 
