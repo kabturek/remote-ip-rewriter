@@ -3,7 +3,7 @@ defmodule TrustedProxyRewriter.Mixfile do
 
   def project do
     [app: :trusted_proxy_rewriter,
-     version: "0.0.3",
+     version: "0.0.4",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -18,7 +18,7 @@ defmodule TrustedProxyRewriter.Mixfile do
 
   defp deps do
     [
-      {:plug, "~> 1.1"},
+      {:plug, "~> 1.3.5"},
       {:ex_doc, ">= 0.0.0", only: :dev}
     ]
   end
