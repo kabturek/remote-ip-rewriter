@@ -10,7 +10,7 @@ It expects the header to contain only one ip address.
     ```elixir
     def deps do
       [
-        {:trusted_proxy_rewriter, "~> 0.0.1"}
+        {:trusted_proxy_rewriter, "~> 0.0.5"}
       ]
     end
     ```

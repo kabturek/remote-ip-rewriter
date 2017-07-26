@@ -40,7 +40,7 @@ defmodule TrustedProxyRewriter do
   defp parse_addresses(nil), do: nil
 
   defp parse_addresses(address) do
-    case address |> String.strip |> to_char_list |> :inet.parse_address do
+    case address |> String.trim |> to_charlist |> :inet.parse_address do
       {:ok, ip} -> ip
       _ -> nil
     end
