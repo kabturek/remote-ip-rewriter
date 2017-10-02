@@ -5,7 +5,7 @@ defmodule TrustedProxyRewriter do
   @xff_header "x-real-ip"
 
   def init(opts) do
-    trusted_proxies = Keyword.get(opts, :proxies, [])
+    trusted_proxies = Keyword.get(opts, :proxies, []) |> Enum.map(&InetCidr.parse/1)
     header_name = Keyword.get(opts, :header_name, @xff_header)
 
     {header_name, trusted_proxies}
@@ -20,7 +20,7 @@ defmodule TrustedProxyRewriter do
   end
 
   defp trust_ip?(remote_ip, trusted_proxies) do
-    remote_ip in trusted_proxies
+    Enum.any?(trusted_proxies, &(InetCidr.contains?(&1, remote_ip)))
   end
 
   defp rewrite_remote_ip([], conn) do

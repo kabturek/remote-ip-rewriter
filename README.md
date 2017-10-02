@@ -10,7 +10,7 @@ It expects the header to contain only one ip address.
     ```elixir
     def deps do
       [
-        {:trusted_proxy_rewriter, "~> 0.0.5"}
+        {:trusted_proxy_rewriter, "~> 0.1.0"}
       ]
     end
     ```
@@ -20,7 +20,7 @@ It expects the header to contain only one ip address.
     ```elixir
     defmodule YourApp.Endpoint do
       ...
-      plug TrustedProxyRewriter, proxies: [{192, 168, 0, 1}], header: "x-real-ip"
+      plug TrustedProxyRewriter, proxies: ["192.168.0.1/32"], header: "x-real-ip"
       ...
       plug YourApp.Router
     end
@@ -32,5 +32,10 @@ It expects the header to contain only one ip address.
     :header - name of the header with ip address
 
     By default no proxy is trusted and the default header is x-real-ip
+
+## Changelog
+
+### 0.1.0
+Started using the InetCidr library so the proxy list has to be in full CIDR notation
 
 Based on https://github.com/krzysztofmo/remote-ip-rewriter
